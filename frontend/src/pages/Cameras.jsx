@@ -1,4 +1,5 @@
-import Camera from "../components/Camera"
+import Camera from "../components/Camera";
+import Button from '@mui/joy/Button';
 
 export default function Cameras(){
 
@@ -6,6 +7,7 @@ export default function Cameras(){
         <div>
             <Camera></Camera>
             <Camera></Camera>
+            <Button>Button</Button>
         </div>
     )
 }
