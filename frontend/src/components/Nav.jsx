@@ -6,11 +6,16 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from "@mui/icons-material/Close";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItemText from "@mui/material/ListItemText";
 import { Link, useNavigate } from 'react-router-dom';
+import ListItemButton from "@mui/material/ListItemButton";
 import { useState } from 'react';
 import axios from "axios";
 
-import './css/nav.css';
+import '../css/nav.css';
 
 export default function Nav() {
 
@@ -50,21 +55,17 @@ export default function Nav() {
         </div>
 
         <List>
-          <ListItem button component={Link} to="/" onClick={() => setIsSidebarVisible(false)}>
-            <ListItemText primary="Home" />
-          </ListItem>
+          <ListItemButton component={Link} to="/cameras" onClick={() => setIsSidebarVisible(false)}>
+            <ListItemText primary="Kamery" />
+          </ListItemButton >
 
-          <ListItem button component={Link} to="/profile" onClick={() => setIsSidebarVisible(false)}>
-            <ListItemText primary="Profile" />
-          </ListItem>
+          <ListItemButton component={Link} to="/footage" onClick={() => setIsSidebarVisible(false)}>
+            <ListItemText primary="Záznam" />
+          </ListItemButton >
 
-          <ListItem button component={Link} to="/settings" onClick={() => setIsSidebarVisible(false)}>
-            <ListItemText primary="Settings" />
-          </ListItem>
-
-          <ListItem button component={Link} to="/help" onClick={() => setIsSidebarVisible(false)}>
-            <ListItemText primary="Help" />
-          </ListItem>
+          <ListItemButton component={Link} to="https://cloudsso.hikvision.com/login?service=https://www.hikvision.com/sso/login-redirect" onClick={() => setIsSidebarVisible(false)}>
+            <ListItemText primary="Nastavenia" />
+          </ListItemButton >
         </List>
       </Drawer>
 
