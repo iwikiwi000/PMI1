@@ -1,9 +1,11 @@
 const express = require("express");
 const dbHndler = require("../database/dbHandler");
 const { startStream, stopStream, getStreamStatus } = require("../streamManager");
+const { body, validationResult } = require("express-validator");
+const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
-router.get("/cameras", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const cameras = await dbHndler.getCameras();
     res.json(cameras);
@@ -13,23 +15,24 @@ router.get("/cameras", async (req, res) => {
   }
 });
 
-// Debug endpoint to check stream status
-router.get("/streams/status", (req, res) => {
+router.get("/streams/status", authMiddleware, (req, res) => {
   const status = getStreamStatus();
   res.json(status);
 });
 
-router.post("/cameras", async (req, res) => {
+router.post("/", authMiddleware, [
+    body("title").isLength({ min: 3 }),
+    body("source").isURL()
+  ],
+  async (req, res) => {
   const { title, source } = req.body;
   const name = title.toLowerCase().replace(/\s+/g, "_");
 
   try {
     const hlsLink = `http://localhost:5000/hls/${name}/stream.m3u8`;
     
-    // Add to database first
     await dbHndler.addCamera(title, source, hlsLink);
     
-    // Then start the stream
     startStream(name, source);
 
     res.status(201).json({ 
@@ -43,7 +46,7 @@ router.post("/cameras", async (req, res) => {
   }
 });
 
-router.delete("/cameras/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
     const camera = await dbHndler.getCameraById(id);

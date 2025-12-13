@@ -1,13 +1,16 @@
 const express = require("express");
+const helmet = require("helmet");
 const cors = require("cors");
-const session = require("express-session");
 const path = require("path");
 
 const app = express();
+
+app.use(helmet());
+
 const port = 5000;
 const publicRoutes = require("./routes/public");
 const cameraRoutes = require("./routes/cameras");
-
+const authMiddleware = require("./middleware/authMiddleware");
 const { startStream, stopAllStreams } = require("./streamManager");
 const dbHndler = require("./database/dbHandler");
 
@@ -38,21 +41,13 @@ app.use("/hls", express.static(path.join(__dirname, "public/hls")));
   }
 })();
 
-app.use(session({
-  secret: "extremnetajnykluc",
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }
-}));
-
 app.use("/", publicRoutes);
-app.use("/", cameraRoutes);
+app.use("/cameras", authMiddleware, cameraRoutes);
 
 app.get('/', (req, res) => {
   res.send('Backend running!');
 });
 
-// Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, stopping all streams...');
   stopAllStreams();
