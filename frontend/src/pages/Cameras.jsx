@@ -33,7 +33,6 @@ export default function Cameras() {
             source: newCamera.source,
         });
 
-
         setNewCamera({ title: "", link: "" });
         setIsFormVisible(false);
     };

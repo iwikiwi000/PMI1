@@ -5,7 +5,7 @@ const { body, validationResult } = require("express-validator");
 const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const cameras = await dbHndler.getCameras();
     res.json(cameras);

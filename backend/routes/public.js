@@ -21,8 +21,8 @@ const rateLimit = require("express-rate-limit");
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 5,
-    message: "Too many login attempts. Try again later."
+    max: 50, // pre devov
+    message: "Priveľa pokusov na prihlásenie. Skúste to neskôr."
 });
 
 router.post(
@@ -36,7 +36,7 @@ router.post(
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ message: "Invalid input" });
+            return res.status(400).json({ message: "Nesprávne údaje" });
         }
 
         const { name, password } = req.body;
@@ -55,7 +55,7 @@ router.post(
 
             const token = jwt.sign(
             { id: user.id, name: user.name, role: user.role },
-            process.env.JWT_SECRET || "dev_secret_key",
+            process.env.JWT_SECRET || "tajnykluc",
             { expiresIn: "1h" }
             );
 
