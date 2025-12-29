@@ -11,7 +11,7 @@ export const useCameraStore = create((set) => ({
     try {
       const res = await axios.get("http://localhost:5000/cameras", {
         withCredentials: true,
-      });
+      });            
       set({ cameras: res.data, loading: false });
     } catch (err) {
       set({ error: err.message, loading: false });

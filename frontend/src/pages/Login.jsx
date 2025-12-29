@@ -27,6 +27,9 @@ export default function Login(){
                 {withCredentials: true}
             );
 
+            const token = res.data.token;
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
             console.log("Login succesfull: ", res.data)
             navigate("/cameras");
         }catch(error){

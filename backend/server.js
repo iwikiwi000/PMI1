@@ -1,14 +1,19 @@
 const express = require("express");
+const helmet = require("helmet");
 const cors = require("cors");
-const session = require("express-session");
 const path = require("path");
 
 const app = express();
+
+app.use(helmet());
+
 const port = 5000;
 
 // ⭐ IMPORTS MUSIA BYŤ HORE - PRED POUŽITÍM!
 const publicRoutes = require("./routes/public");
 const cameraRoutes = require("./routes/cameras");
+
+const { startStream, stopAllStreams } = require("./streamManager");
 const dbHndler = require("./database/dbHandler");
 const { startStream, stopAllStreams, getStreamStatus } = require("./streamManager");
 const ipWhitelist = require("./routes/ipWhitelist"); // ⭐ IP filter
@@ -74,25 +79,20 @@ app.use(session({
   }
 })();
 
-// API endpoint pre status streamov
-app.get('/api/streams/status', (req, res) => {
-  try {
-    const status = getStreamStatus();
-    res.json(status);
-  } catch (error) {
-    console.error('Chyba pri získavaní statusu streamov:', error);
-    res.status(500).json({ error: 'Nepodarilo sa získať status streamov' });
-  }
-});
+app.use(session({
+  secret: "extremnetajnykluc",
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
 
 app.use("/", publicRoutes);
-app.use("/", cameraRoutes);
+app.use("/cameras", authMiddleware, cameraRoutes);
 
 app.get('/', (req, res) => {
   res.send('Backend running!');
 });
 
-// Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, stopping all streams...');
   stopAllStreams();

@@ -42,10 +42,9 @@ function startStream(name, rtspUrl) {
 
     // LOW LATENCY HLS
     "-f", "hls",
-    "-hls_time", "1",
-    "-hls_list_size", "3",
-    "-hls_flags", "delete_segments+append_list+independent_segments",
-    "-hls_allow_cache", "0",
+    "-hls_time", "2",
+    "-hls_list_size", "5",
+    "-hls_flags", "delete_segments+append_list",
     "-hls_segment_filename", path.join(hlsDir, "segment%03d.ts"),
 
     "-y",

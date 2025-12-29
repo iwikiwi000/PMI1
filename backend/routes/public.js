@@ -2,6 +2,8 @@ const express = require("express")
 const dbHndler = require("../database/dbHandler")
 const router = express.Router();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { body, validationResult } = require("express-validator");
 
 const hashPassword = async (password)=>{
     const saltRounds = 10;
@@ -15,39 +17,58 @@ const hashPassword = async (password)=>{
     console.log("Hashed password:", hashed, salt);
 })();
 
+const rateLimit = require("express-rate-limit");
 
-router.post("/login", async(req, res)=>{
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: "Too many login attempts. Try again later."
+});
 
-    const {name, password} = req.body;
+router.post(
+    "/login",
+    loginLimiter,
+    [
+        body("name").trim().isLength({ min: 3 }),
+        body("password").isLength({ min: 8 })
+    ],
+    async (req, res) => {
 
-    try {
-        const user = await dbHndler.getUser(name);
-
-        console.log(user);
-        console.log(name, password);
-        const isValid = await bcrypt.compare(password, user.hashed);
-        
-        if (!isValid) {
-            return res.status(401).json({ message: "Invalid credentials" });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ message: "Invalid input" });
         }
 
-        req.session.user = { id: user.id, name: user.name };
-        res.json({ message: "Login successful", user: req.session.user });
+        const { name, password } = req.body;
 
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+        try {
+            const user = await dbHndler.getUser(name);
+
+            if (!user) {
+                return res.status(401).json({ message: "Invalid credentials" });
+            }
+
+            const isValid = await bcrypt.compare(password, user.hashed);
+            if (!isValid) {
+                return res.status(401).json({ message: "Invalid credentials" });
+            }
+
+            const token = jwt.sign(
+            { id: user.id, name: user.name, role: user.role },
+            process.env.JWT_SECRET || "dev_secret_key",
+            { expiresIn: "1h" }
+            );
+
+            res.json({ token });
+
+        } catch (err) {
+            res.status(500).json({ message: "Server error" });
+        }
     }
-
-})
+);
 
 router.post("/logout", (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            return res.status(500).json({ message: "Logout failed" });
-        }
-        res.clearCookie("connect.sid");
-        res.json({ message: "Logged out successfully" });
-    });
+  res.json({ message: "Logged out successfully" });
 });
 
 module.exports = router;
