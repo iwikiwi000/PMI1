@@ -12,14 +12,9 @@ import "../css/cameras.css";
 import { useCameraStore } from "../storage/cameraStorage";
 
 export default function Cameras() {
-    const {cameras, fetchCameras, removeCamera, addCamera, loading} = useCameraStore();
-    const [newCamera, setNewCamera] = useState({title: "", link: ""});
+    const {cameras, fetchCameras, removeCamera, loading} = useCameraStore();
+    const [newCamera, setNewCamera] = useState({title: "", source: ""});
     const [isFormVisible, setIsFormVisible] = useState(false);
-        //kamery sa musia pridávať do db
-    // const [cameras, setCameras] = useState([
-    //     { c_id: 1, title: "Kamera", link: "http://localhost:5000/hls/cam1/stream.m3u8" },
-    //     { c_id: 2, title: "Termo Kamera", link: "http://localhost:5000/hls/cam2/stream.m3u8" },
-    // ]);
 
     useEffect(()=>{
         fetchCameras();
@@ -49,7 +44,6 @@ export default function Cameras() {
         setNewCamera(prev => ({ ...prev, [name]: value }));
     };
 
-
     const handleAdding = () => {
         setIsFormVisible(true);
     };
@@ -60,7 +54,6 @@ export default function Cameras() {
 
     const actions = [
         { icon: <AddIcon />, name: "Add camera", onClick: handleAdding },
-        { icon: <RemoveIcon />, name: "Remove camera", onClick: handleRemoving },
     ];
 
     return (
@@ -105,7 +98,6 @@ export default function Cameras() {
                 style={{ display: "block", marginBottom: "10px", width: "100%" }}
             />
 
-
             <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <button
                 type="submit"
@@ -137,7 +129,11 @@ export default function Cameras() {
 
         {cameras.map((cam) => (
             <div key={cam.c_id} style={{ position: "relative" }}>
-                <Camera link={cam.link} title={cam.title} />
+                <Camera 
+                    link={cam.link} 
+                    title={cam.title}
+                    cameraName={cam.title.toLowerCase().replace(/\s+/g, "_")}
+                />
                 <button
                 onClick={() => handleRemoving(cam.c_id)}
                 style={{
@@ -152,7 +148,7 @@ export default function Cameras() {
                     cursor: "pointer",
                 }}
                 >
-                    x
+                    ✕
                 </button>
             </div>
         ))}

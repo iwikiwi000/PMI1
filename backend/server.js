@@ -2,42 +2,73 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 const path = require("path");
+const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
 
 app.use(helmet());
 
 const port = 5000;
+
+// ⭐ IMPORTS MUSIA BYŤ HORE - PRED POUŽITÍM!
 const publicRoutes = require("./routes/public");
 const cameraRoutes = require("./routes/cameras");
-const authMiddleware = require("./middleware/authMiddleware");
-const { startStream, stopAllStreams } = require("./streamManager");
+
 const dbHndler = require("./database/dbHandler");
+const { startStream, stopStream, stopAllStreams, getStreamStatus } = require("./streamManager");
+const ipWhitelist = require("./routes/ipWhitelist"); // ⭐ IP filter
 
 app.use(express.json());
+
+// ⭐ TRUST PROXY - aby sme dostali správnu IP adresu
+app.set('trust proxy', true);
 
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true
 }));
 
+// ⭐ IP WHITELIST - MUSÍ BYŤ PRED OSTATNÝMI ROUTES!
+app.use(ipWhitelist);
+
 app.use("/hls", express.static(path.join(__dirname, "public/hls")));
 
+// ⭐ TERAZ MÔŽEME INICIALIZOVAŤ STREAMY
 // Initialize streams from database
 (async () => {
   try {
     const cameras = await dbHndler.getCameras();
-    console.log(`Found ${cameras.length} cameras in database`);
+    console.log("🔍 DEBUG: Cameras from DB:", cameras);
+    console.log(`📊 Found ${cameras.length} cameras in database`);
+    
+    if (cameras.length === 0) {
+      console.log("⚠️ No cameras found in database!");
+      return;
+    }
     
     cameras.forEach(cam => {
       const name = cam.title.toLowerCase().replace(/\s+/g, "_");
-      console.log(`Starting stream for: ${cam.title}`);
-      console.log(`  RTSP source: ${cam.source}`);
-      console.log(`  HLS output: ${cam.link}`);
-      startStream(name, cam.source);
+      console.log(`🎥 Starting stream for: ${cam.title}`);
+      console.log(`   Stream name: ${name}`);
+      console.log(`   RTSP source: ${cam.source}`);
+      console.log(`   HLS output: ${cam.link}`);
+      
+      try {
+        startStream(name, cam.source);
+        console.log(`✅ Stream ${name} started successfully`);
+      } catch (err) {
+        console.error(`❌ Failed to start stream ${name}:`, err);
+      }
     });
+    
+    // Počkaj 2 sekundy a skontroluj status
+    setTimeout(() => {
+      const status = getStreamStatus();
+      console.log("📊 Stream status after 2s:", JSON.stringify(status, null, 2));
+    }, 2000);
+    
   } catch (err) {
-    console.error("Error initializing streams:", err);
+    console.error("❌ Error initializing streams:", err);
   }
 })();
 
