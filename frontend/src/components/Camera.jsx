@@ -2,30 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import axios from "axios";
 
-export default function Camera({ link, title, cameraName }) {
+export default function Camera({ link, title, cameraName, bitrate = 0 }) {
   const videoRef = useRef(null);
-  const [bitrate, setBitrate] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-
-  // Načítanie bitrate každú sekundu - dynamicky sa mení!
-  useEffect(() => {
-    const fetchBitrate = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/streams/status");
-        const streamData = response.data[cameraName];
-        if (streamData && streamData.bitrate) {
-          setBitrate(streamData.bitrate);
-        }
-      } catch (error) {
-        console.error("Chyba pri načítaní bitrate:", error);
-      }
-    };
-
-    fetchBitrate(); // Prvé načítanie
-    const interval = setInterval(fetchBitrate, 1000); // ⭐ Aktualizácia každú sekundu!
-
-    return () => clearInterval(interval);
-  }, [cameraName]);
 
   // HLS video player
   useEffect(() => {

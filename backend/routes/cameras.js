@@ -17,6 +17,7 @@ router.get("/", authMiddleware, async (req, res) => {
 
 router.get("/streams/status", authMiddleware, (req, res) => {
   const status = getStreamStatus();
+  console.log("Aktuálne streamy:", status); // debug
   res.json(status);
 });
 

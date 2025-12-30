@@ -236,7 +236,7 @@ function getStreamStatus() {
     status[name] = {
       running: true,
       rtspUrl: stream.rtspUrl,
-      bitrate: stream.bitrate,  // ⭐ Tento sa už aktualizuje každú sekundu!
+      bitrate: stream.bitrate,
       playlistExists: fs.existsSync(m3u8Path),
       segmentCount: fs.existsSync(hlsDir)
         ? fs.readdirSync(hlsDir).filter(f => f.endsWith('.ts')).length
@@ -245,5 +245,6 @@ function getStreamStatus() {
   });
   return status;
 }
+
 
 module.exports = { startStream, stopStream, stopAllStreams, getStreamStatus };

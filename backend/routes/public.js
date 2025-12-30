@@ -1,9 +1,11 @@
+require("dotenv").config();
 const express = require("express")
 const dbHndler = require("../database/dbHandler")
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
+
 
 const hashPassword = async (password)=>{
     const saltRounds = 10;
@@ -54,10 +56,12 @@ router.post(
             }
 
             const token = jwt.sign(
-            { id: user.id, name: user.name, role: user.role },
-            process.env.JWT_SECRET || "tajnykluc",
-            { expiresIn: "1h" }
+                { id: user.id, name: user.name, role: user.role },
+                process.env.JWT_SECRET,
+                { expiresIn: "1h" }
             );
+
+            console.log("JWT SECRET (SIGN):", process.env.JWT_SECRET);
 
             res.json({ token });
 

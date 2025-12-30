@@ -4,6 +4,7 @@ import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import api from "../api/token";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -15,6 +16,7 @@ export default function Cameras() {
     const {cameras, fetchCameras, removeCamera, loading} = useCameraStore();
     const [newCamera, setNewCamera] = useState({title: "", source: ""});
     const [isFormVisible, setIsFormVisible] = useState(false);
+    const [bitrateData, setBitrateData] = useState({});
 
     useEffect(()=>{
         fetchCameras();
@@ -23,14 +25,26 @@ export default function Cameras() {
     const handleFormSubmit = async(e) => {
         e.preventDefault();
 
-        await axios.post("http://localhost:5000/cameras", {
+        await api.post("/cameras", {
             title: newCamera.title,
             source: newCamera.source,
         });
-
         setNewCamera({ title: "", link: "" });
         setIsFormVisible(false);
     };
+
+    useEffect(() => {
+    const interval = setInterval(async () => {
+        try {
+        const res = await api.get("/cameras/streams/status");
+        setBitrateData(res.data);
+        } catch (err) {
+        console.error("Chyba pri načítaní bitrate:", err);
+        }
+    }, 1000);
+
+    return () => clearInterval(interval);
+    }, []);
 
     if(loading) return <p>Načítava sa ...</p>
 
@@ -133,25 +147,28 @@ export default function Cameras() {
                     link={cam.link} 
                     title={cam.title}
                     cameraName={cam.title.toLowerCase().replace(/\s+/g, "_")}
+                    bitrate={bitrateData[cam.title.toLowerCase().replace(/\s+/g, "_")]?.bitrate || 0}
                 />
+
                 <button
-                onClick={() => handleRemoving(cam.c_id)}
-                style={{
-                    position: "absolute",
-                    top: "8px",
-                    right: "8px",
-                    background: "rgba(0, 0, 0, 0.7)",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "4px",
-                    padding: "4px 8px",
-                    cursor: "pointer",
-                }}
+                    onClick={() => handleRemoving(cam.c_id)}
+                    style={{
+                        position: "absolute",
+                        top: "8px",
+                        right: "8px",
+                        background: "rgba(0, 0, 0, 0.7)",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "4px",
+                        padding: "4px 8px",
+                        cursor: "pointer",
+                    }}
                 >
                     ✕
                 </button>
             </div>
         ))}
+
 
         <SpeedDial
             ariaLabel="Camera actions"
