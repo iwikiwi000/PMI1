@@ -6,7 +6,6 @@ export default function Camera({ link, title, cameraName, bitrate = 0 }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // HLS video player
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;

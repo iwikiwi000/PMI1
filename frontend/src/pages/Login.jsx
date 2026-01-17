@@ -4,12 +4,15 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../storage/authStorage";
+import api from "../api/token";
 
 import '../css/Login.css'
 
 export default function Login(){
 
     const navigate = useNavigate();
+    const {login} = useAuthStore();
 
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
@@ -21,21 +24,14 @@ export default function Login(){
         setError("");
 
         try {
-            const res = await axios.post("http://localhost:5000/login", { name, password });
-            const token = res.data.token;
-            localStorage.setItem("token", token);
+            const res = await api.post("/login", { name, password }); 
 
-            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            login(res.data.token);
+
             console.log("Login successful: ", res.data);
             navigate("/cameras");
         } catch (error) {
-            if (error.response) {
-                setError(error.response.data.message);
-                console.log(error);
-            } else {
-                setError("Nastal problém, prosím skús to znovu.", error);
-                console.log(error);
-            }
+            setError(error.response?.data?.message || "Error");
         }
 
     }

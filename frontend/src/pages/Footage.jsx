@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
 import Recording from "../components/Recording";
 
 export default function Footage(){
+
+    const [error, setError] = useState();
 
     return(
         <>

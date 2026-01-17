@@ -38,4 +38,6 @@ export const useCameraStore = create((set) => ({
       console.error("Error deleting camera:", err);
     }
   },
+
+  
 }));

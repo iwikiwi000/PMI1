@@ -18,9 +18,8 @@ function startStream(name, rtspUrl) {
 
   const outputPath = path.join(hlsDir, "stream.m3u8");
   
-  // ⭐ Nastavený target bitrate (video + audio)
-  const targetVideoBitrate = 2000; // kbps
-  const targetAudioBitrate = 128;  // kbps
+  const targetVideoBitrate = 2000;
+  const targetAudioBitrate = 128;
   const targetTotalBitrate = targetVideoBitrate + targetAudioBitrate;
 
   console.log(`🎥 Starting stream: ${name}`);
@@ -40,7 +39,6 @@ function startStream(name, rtspUrl) {
     "-c:a", "aac",
     "-b:a", "128k",
 
-    // LOW LATENCY HLS
     "-f", "hls",
     "-hls_time", "2",
     "-hls_list_size", "5",
@@ -56,7 +54,6 @@ function startStream(name, rtspUrl) {
   let connectionEstablished = false;
   let outputStarted = false;
 
-  // ⭐ PRAVIDELNÉ MERANIE BITRATE - každú sekundu
   const bitrateInterval = setInterval(() => {
     const streamData = streams.get(name);
     if (!streamData) {
@@ -70,32 +67,28 @@ function startStream(name, rtspUrl) {
       const segments = fs.readdirSync(hlsDir).filter(f => f.endsWith('.ts'));
       
       if (segments.length > 0) {
-        // Vezmeme posledný segment (najnovší)
         const latestSegment = segments[segments.length - 1];
         const segPath = path.join(hlsDir, latestSegment);
         
         try {
           const stats = fs.statSync(segPath);
-          // Segment je 1 sekunda, takže: (bytes * 8) / 1000 = kbps
           const currentBitrate = Math.round((stats.size * 8) / 1000);
           
           if (currentBitrate > 0) {
             streamData.bitrate = currentBitrate;
           }
         } catch (err) {
-          // ignore
         }
       }
     }
-  }, 1000); // Každú sekundu
+  }, 1000);
 
-  // SAVE BITRATE - použijeme target bitrate ako začiatočnú hodnotu
   streams.set(name, {
     process: ffmpeg,
     rtspUrl,
-    bitrate: targetTotalBitrate,  // Začiatočná hodnota
+    bitrate: targetTotalBitrate,
     lastUpdate: Date.now(),
-    bitrateInterval: bitrateInterval  // ⭐ Uložíme interval aby sme ho mohli zastaviť
+    bitrateInterval: bitrateInterval
   });
 
   console.log(`✅ ${name}: Target bitrate nastavený na ${targetTotalBitrate} kbps`);
@@ -107,8 +100,6 @@ function startStream(name, rtspUrl) {
   ffmpeg.stderr.on("data", (data) => {
     const output = data.toString();
 
-    // ⭐ Skúsime parsovaÅ¥ skutočný bitrate, ak existuje
-    // Formát 1: "bitrate=2000.5kbits/s" alebo "bitrate=2.5Mbits/s"
     const bitrateMatch = output.match(/bitrate=\s*([\d.]+)\s*([km])bits\/s/i);
     
     if (bitrateMatch) {

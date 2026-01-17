@@ -3,11 +3,11 @@ import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import api from "../api/token";
+import { useAuthStore } from "../storage/authStorage";
+import { useNavigate } from "react-router-dom";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 import "../css/cameras.css";
 import { useCameraStore } from "../storage/cameraStorage";
@@ -17,10 +17,22 @@ export default function Cameras() {
     const [newCamera, setNewCamera] = useState({title: "", source: ""});
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [bitrateData, setBitrateData] = useState({});
+    const {isAuthenticated, checkAuth} = useAuthStore();
+    const navigate = useNavigate();
+    const [authChecked, setAuthChecked] = useState(false);
 
-    useEffect(()=>{
+    useEffect(() => {
+        checkAuth();
+        setAuthChecked(true);
+    }, []);
+
+    useEffect(() => {
+        if (authChecked && isAuthenticated) {
         fetchCameras();
-    }, [fetchCameras]);
+        }
+    }, [authChecked, isAuthenticated, fetchCameras]);
+
+    
 
     const handleFormSubmit = async(e) => {
         e.preventDefault();
@@ -36,15 +48,24 @@ export default function Cameras() {
     useEffect(() => {
     const interval = setInterval(async () => {
         try {
-        const res = await api.get("/cameras/streams/status");
-        setBitrateData(res.data);
+            const res = await api.get("/cameras/streams/status");
+            setBitrateData(res.data);
         } catch (err) {
-        console.error("Chyba pri načítaní bitrate:", err);
+            console.error("Chyba pri načítaní bitrate:", err);
+            if (err.response?.status === 401) {
+                navigate('/403', { replace: true });
+            } else if (err.response?.status === 500) {
+                navigate('/500', { replace: true });
+            }
         }
-    }, 1000);
+    }, 5000);
 
     return () => clearInterval(interval);
     }, []);
+
+    if (!authChecked || !isAuthenticated) {
+        return <div>Načítava autentifikáciu...</div>;
+    }
 
     if(loading) return <p>Načítava sa ...</p>
 
@@ -69,6 +90,8 @@ export default function Cameras() {
     const actions = [
         { icon: <AddIcon />, name: "Add camera", onClick: handleAdding },
     ];
+    
+    
 
     return (
         <div style={{ display: "flex", gap: "10px", position: "relative", padding: "20px" }}>

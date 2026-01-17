@@ -1,4 +1,4 @@
-import test from '../assets/image.png';
+
 
 export default function Recording() {
   return (
@@ -7,7 +7,7 @@ export default function Recording() {
 
       <div className="d-flex gap-2 flex-wrap">
         <div>
-            <img src={test} alt="recording" style={{
+            <img src={src="/assets/image.png"} alt="recording" style={{
                 width: "360px",
                 height: "200px",
                 objectFit: "cover",
@@ -16,7 +16,7 @@ export default function Recording() {
             <p>11.10.2025</p>
         </div>
         <div>
-            <img src={test} alt="recording" style={{
+            <img src={src="/assets/image.png"} alt="recording" style={{
                 width: "360px",
                 height: "200px",
                 objectFit: "cover",
@@ -25,7 +25,7 @@ export default function Recording() {
             <p>12.10.2025</p>
         </div>
         <div>
-            <img src={test} alt="recording" style={{
+            <img src={src="/assets/image.png"} alt="recording" style={{
                 width: "360px",
                 height: "200px",
                 objectFit: "cover",

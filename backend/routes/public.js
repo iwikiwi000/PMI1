@@ -5,7 +5,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
-
+const authMiddleware = require("../middleware/authMiddleware");
 
 const hashPassword = async (password)=>{
     const saltRounds = 10;
@@ -23,7 +23,7 @@ const rateLimit = require("express-rate-limit");
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 50, // pre devov
+    max: 50, // pre devikov
     message: "Priveľa pokusov na prihlásenie. Skúste to neskôr."
 });
 
@@ -70,6 +70,10 @@ router.post(
         }
     }
 );
+
+router.get('/me', authMiddleware, (req, res) => {
+  res.json({ user: req.user });  // decodovany JWT token
+});
 
 router.post("/logout", (req, res) => {
   res.json({ message: "Logged out successfully" });
