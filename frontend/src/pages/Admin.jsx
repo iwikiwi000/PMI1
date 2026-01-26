@@ -70,8 +70,11 @@ export default function Admin(){
     }, []);
 
     return(
-        <div>
-            {console.log(users)}
+        <div className='m-4'>
+            <div className=''>
+                <p>meno</p>
+                <p>rola</p>
+            </div>
             {users.length > 0 ? (users.map((user)=>(
                 <User
                 key={user.u_id}

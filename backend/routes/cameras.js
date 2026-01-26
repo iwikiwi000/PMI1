@@ -2,7 +2,7 @@ const express = require("express");
 const dbHndler = require("../database/dbHandler");
 const { startStream, stopStream, getStreamStatus } = require("../streamManager");
 const { body, validationResult } = require("express-validator");
-const roleMiddleware = require("../middleware/releMiddleware");
+const roleMiddleware = require("../middleware/roleMiddleware");
 const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 

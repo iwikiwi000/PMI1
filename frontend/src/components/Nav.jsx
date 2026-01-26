@@ -20,6 +20,9 @@ export default function Nav() {
     navigate("/", { replace: true });
   };
 
+  const user = useAuthStore((s) => s.user);
+  const role = user?.role;
+
   return (
     <>
       {isAuthenticated && (
@@ -40,9 +43,11 @@ export default function Nav() {
             <ListItemButton component={Link} to="/footage">
               <ListItemText primary="Záznam" />
             </ListItemButton>
-            <ListItemButton component={Link} to="/admin">
-              <ListItemText primary="Správa" />
-            </ListItemButton>
+            {role === "admin" && (
+              <ListItemButton component={Link} to="/admin">
+                <ListItemText primary="Správa" />
+              </ListItemButton>
+            )}
           </List>
         </Drawer>
       )}

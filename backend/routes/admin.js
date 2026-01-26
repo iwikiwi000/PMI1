@@ -5,7 +5,7 @@ const { body, validationResult } = require("express-validator");
 const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
-const roleMiddleware = require("../middleware/releMiddleware");
+const roleMiddleware = require("../middleware/roleMiddleware");
 
 router.get("/getUsers", authMiddleware, roleMiddleware(["admin"]), async(req, res)=>{
     try{

@@ -3,6 +3,7 @@ import './css/App.css'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import ProtectedRoute from '../src/components/ProtectedRoute';
+import AdminRoute from '../src/components/AdminRoute';
 
 import Nav from './components/Nav';
 import Login from './pages/Login';
@@ -47,13 +48,13 @@ function App() {
             }
           />
           <Route
-            path='/admin'
+            path="/admin"
             element={
-              <ProtectedRoute>
-                <Admin/>
-              </ProtectedRoute>
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
             }
-            />
+          />
           <Route path="*" element={<PageNotFound />} />
           <Route path="/403" element={<AutorizationError />} />
           <Route path="/500" element={<ServerError/>} />
