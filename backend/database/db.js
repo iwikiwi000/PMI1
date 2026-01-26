@@ -1,6 +1,5 @@
 const mysql = require("mysql2/promise");
 
-// Používame connection pool namiesto jednej connection
 const pool = mysql.createPool({
   host: "127.0.0.1",
   user: "root",
@@ -11,7 +10,6 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// Test pripojenia pri spustení
 (async () => {
   try {
     const connection = await pool.getConnection();

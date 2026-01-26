@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 export const useAuthStore = create((set) => ({
   token: sessionStorage.getItem("token"),
+  user: null,
   isAuthenticated: !!sessionStorage.getItem("token"),
 
   login: (token) => {

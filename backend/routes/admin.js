@@ -5,7 +5,9 @@ const { body, validationResult } = require("express-validator");
 const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
-router.get("/getUsers", authMiddleware, async(req, res)=>{
+const roleMiddleware = require("../middleware/releMiddleware");
+
+router.get("/getUsers", authMiddleware, roleMiddleware(["admin"]), async(req, res)=>{
     try{
         const users = await dbHandler.getUsers();
         console.log(users);
@@ -16,7 +18,7 @@ router.get("/getUsers", authMiddleware, async(req, res)=>{
     }
 });
 
-router.post("/addUser", authMiddleware, async(req, res)=>{
+router.post("/addUser", authMiddleware, roleMiddleware(["admin"]), async(req, res)=>{
     const {name, password, role} = req.body;
     console.log("Na backend", name, password, role);
 
@@ -40,7 +42,7 @@ router.post("/addUser", authMiddleware, async(req, res)=>{
     }
 });
 
-router.delete("/deleteUser/:u_id", authMiddleware, async(req, res)=>{
+router.delete("/deleteUser/:u_id", authMiddleware, roleMiddleware(["admin"]), async(req, res)=>{
     const {u_id} = req.params;
 
     try{

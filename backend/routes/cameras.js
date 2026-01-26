@@ -2,6 +2,7 @@ const express = require("express");
 const dbHndler = require("../database/dbHandler");
 const { startStream, stopStream, getStreamStatus } = require("../streamManager");
 const { body, validationResult } = require("express-validator");
+const roleMiddleware = require("../middleware/releMiddleware");
 const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
@@ -47,7 +48,7 @@ router.post("/", authMiddleware, [
   }
 });
 
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", authMiddleware, roleMiddleware(["admin"]), async (req, res) => {
   const { id } = req.params;
   try {
     const camera = await dbHndler.getCameraById(id);

@@ -77,7 +77,7 @@ export default function Cameras() {
     
     
     return (
-        <div style={{ display: "flex", gap: "10px", position: "relative", padding: "20px" }}>
+        <div className="div-flex" style={{ display: "flex", gap: "10px", position: "relative", padding: "20px" }}>
 
         {isFormVisible && (
             <form
@@ -154,6 +154,7 @@ export default function Cameras() {
                     title={cam.title}
                     cameraName={cam.title.toLowerCase().replace(/\s+/g, "_")}
                     bitrate={bitrateData[cam.title.toLowerCase().replace(/\s+/g, "_")]?.bitrate || 0}
+                    cameraId={cam.c_id}
                 />
 
                 <button
