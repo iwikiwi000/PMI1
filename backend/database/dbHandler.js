@@ -64,6 +64,24 @@ const getUsers = async()=>{
     }
 }
 
+const addUser = async(name, role, hashed, salt)=>{
+    try{
+        await db.query('INSERT INTO user(name, role, hashed, salt) values(?, ?, ?, ?)', [name, role, hashed, salt]);
+    }catch(err){
+        console.log("Error adding new User", err);
+        throw err;
+    }
+}
+
+const deleteUser = async(u_id)=>{
+    try{
+        await db.query('DELETE FROM user WHERE u_id = ?', [u_id]);
+    }catch(err){
+        console.log("Error deleting User form DB ", err);
+        throw err;
+    }
+}
+
 module.exports = {
     getUser,
     getCameras,
@@ -71,5 +89,7 @@ module.exports = {
     removeCamera,
     getCameraById,
     getUsers,
+    addUser,
+    deleteUser,
 
 }

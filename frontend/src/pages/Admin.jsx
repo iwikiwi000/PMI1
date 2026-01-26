@@ -11,14 +11,15 @@ export default function Admin(){
 
     const[users, setUsers] = useState([]);
     const [isFormVisible, setIsFormVisible] = useState(false);
-    const[newUser, setNewUser] = useState([]);
+    const[newUser, setNewUser] = useState({name: "", role: "admin", password: ""});
 
-    const handleAddUser=()=>{
-        console.log("Add user");
-    };
-
-    const handleRemoveUser=()=>{
-        console.log("Remove user");
+    const handleRemoveUser = async (u_id) => {
+        try {
+            await api.delete(`/admin/deleteUser/${u_id}`);
+            fetchUsers();
+        } catch (err) {
+            console.log("Error deleting User", err);
+        }
     };
 
     const handleAdding = () => {
@@ -32,7 +33,7 @@ export default function Admin(){
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setNewCamera(prev => ({ ...prev, [name]: value }));
+        setNewUser(prev => ({ ...prev, [name]: value }));
     };
 
     const actions = [
@@ -41,11 +42,17 @@ export default function Admin(){
 
     const handleFormSubmit = async(e) => {
         e.preventDefault();
+        try{
+            await api.post("/admin/addUser", newUser);
+        
+            setNewUser({ name: "", role: "", password: "" });
+            console.log(newUser);
+            setIsFormVisible(false);
 
-        await api.post("/addUser", {
-        });
-        setNewUser({ name: "", role: "", password: "" });
-        setIsFormVisible(false);
+            fetchUsers();
+        }catch(err){
+            console.log("Error adding new User", err);
+        }
     };
 
     const fetchUsers = async() => {
@@ -70,7 +77,7 @@ export default function Admin(){
                 key={user.u_id}
                 name={user.name}
                 role={user.role}
-                onAdd={() => handleAddUser(user.u_id)}
+                onRemove={() => handleRemoveUser(user.u_id)}
                 />
             ))):(
                 <p>Nepodarilo sa nájsť žiadnych používateľov!</p>
@@ -125,6 +132,27 @@ export default function Admin(){
                 required
                 style={{ display: "block", marginBottom: "10px", width: "100%" }}
             />
+
+            <label>Heslo:</label>
+            <input
+                type="password"
+                name="password"
+                value={newUser.password}
+                onChange={handleChange}
+                required
+                style={{ display: "block", marginBottom: "10px", width: "100%" }}
+            />
+
+            <label>Rola:</label>
+            <select 
+                value={newUser.role} 
+                onChange={handleChange}
+                name="role"
+                style={{ display: "block", marginBottom: "10px", width: "100%" }}
+            >
+                <option value="admin">Admin</option>
+                <option value="viewer">Zhliadateľ</option>
+            </select>
 
             <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <button

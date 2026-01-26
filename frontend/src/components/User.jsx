@@ -1,6 +1,7 @@
 import '../css/User.css'
 
 export default function User({ name, role, onRemove }) {
+    
     return (
         <div className="user">
             <div className="user-info">
