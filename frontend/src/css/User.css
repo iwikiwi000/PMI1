@@ -1,0 +1,26 @@
+.user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid #ddd;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 600;
+}
+
+.user-role {
+    font-size: 0.85rem;
+    color: gray;
+}
+
+.user-actions {
+    display: flex;
+    gap: 8px;
+}

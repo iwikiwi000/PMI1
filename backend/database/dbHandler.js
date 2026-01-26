@@ -54,10 +54,22 @@ const removeCamera = async (id) =>{
     }
 }
 
+const getUsers = async()=>{
+    try{
+        const [users] = await db.query('SELECT * FROM user');
+        return users;
+    }catch(err){
+        console.log("DB Error: ", err);
+        throw err;
+    }
+}
+
 module.exports = {
     getUser,
     getCameras,
     addCamera,
     removeCamera,
-    getCameraById
+    getCameraById,
+    getUsers,
+
 }

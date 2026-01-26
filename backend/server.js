@@ -10,17 +10,16 @@ app.use(helmet());
 
 const port = 5000;
 
-// ⭐ IMPORTS MUSIA BYŤ HORE - PRED POUŽITÍM!
 const publicRoutes = require("./routes/public");
+const adminRoutes = require("./routes/admin");
 const cameraRoutes = require("./routes/cameras");
 
 const dbHndler = require("./database/dbHandler");
 const { startStream, stopStream, stopAllStreams, getStreamStatus } = require("./streamManager");
-const ipWhitelist = require("./routes/ipWhitelist"); // ⭐ IP filter
+const ipWhitelist = require("./routes/ipWhitelist");
 
 app.use(express.json());
 
-// ⭐ TRUST PROXY - aby sme dostali správnu IP adresu
 app.set('trust proxy', true);
 
 app.use(cors({
@@ -28,13 +27,10 @@ app.use(cors({
   credentials: true
 }));
 
-// ⭐ IP WHITELIST - MUSÍ BYŤ PRED OSTATNÝMI ROUTES!
 app.use(ipWhitelist);
 
 app.use("/hls", express.static(path.join(__dirname, "public/hls")));
 
-// ⭐ TERAZ MÔŽEME INICIALIZOVAŤ STREAMY
-// Initialize streams from database
 (async () => {
   try {
     const cameras = await dbHndler.getCameras();
@@ -73,6 +69,7 @@ app.use("/hls", express.static(path.join(__dirname, "public/hls")));
 })();
 
 app.use("/", publicRoutes);
+app.use("/admin", authMiddleware, adminRoutes);
 app.use("/cameras", authMiddleware, cameraRoutes);
 
 app.get('/', (req, res) => {

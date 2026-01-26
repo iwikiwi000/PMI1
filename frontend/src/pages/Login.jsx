@@ -12,7 +12,7 @@ import '../css/Login.css'
 export default function Login(){
 
     const navigate = useNavigate();
-    const {login} = useAuthStore();
+    const login = useAuthStore((s) => s.login);
 
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
@@ -31,7 +31,7 @@ export default function Login(){
             console.log("Login successful: ", res.data);
             navigate("/cameras");
         } catch (error) {
-            setError(error.response?.data?.message || "Error");
+            setError(error.response?.data?.message || "Login failed");
         }
 
     }

@@ -4,7 +4,6 @@ import SpeedDialAction from "@mui/material/SpeedDialAction";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import AddIcon from "@mui/icons-material/Add";
 import api from "../api/token";
-import { useAuthStore } from "../storage/authStorage";
 import { useNavigate } from "react-router-dom";
 
 import { useEffect, useState } from "react";
@@ -17,22 +16,11 @@ export default function Cameras() {
     const [newCamera, setNewCamera] = useState({title: "", source: ""});
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [bitrateData, setBitrateData] = useState({});
-    const {isAuthenticated, checkAuth} = useAuthStore();
     const navigate = useNavigate();
-    const [authChecked, setAuthChecked] = useState(false);
 
     useEffect(() => {
-        checkAuth();
-        setAuthChecked(true);
-    }, []);
-
-    useEffect(() => {
-        if (authChecked && isAuthenticated) {
         fetchCameras();
-        }
-    }, [authChecked, isAuthenticated, fetchCameras]);
-
-    
+    }, [fetchCameras]);
 
     const handleFormSubmit = async(e) => {
         e.preventDefault();
@@ -63,10 +51,6 @@ export default function Cameras() {
     return () => clearInterval(interval);
     }, []);
 
-    if (!authChecked || !isAuthenticated) {
-        return <div>Načítava autentifikáciu...</div>;
-    }
-
     if(loading) return <p>Načítava sa ...</p>
 
     const handleCancel = (e) => {
@@ -92,7 +76,6 @@ export default function Cameras() {
     ];
     
     
-
     return (
         <div style={{ display: "flex", gap: "10px", position: "relative", padding: "20px" }}>
 
