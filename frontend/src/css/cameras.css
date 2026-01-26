@@ -1,3 +1,198 @@
-.form-container{
+.form-container {
     min-width: 400px;
+}
+
+/* Camera komponent štýly */
+.camera-container {
+    border: 2px solid #ff6b17;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #000;
+    position: relative;
+}
+
+.camera-header {
+    background-color: #ff6b17;
+    color: white;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.camera-title {
+    font-weight: bold;
+}
+
+.camera-header-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.bitrate-badge {
+    font-size: 0.9em;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.details-button,
+.edit-button {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.details-button:hover,
+.edit-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.details-button.active,
+.edit-button.active {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.camera-video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.details-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    background-color: #1a1a1a;
+}
+
+.details-panel.expanded {
+    max-height: 150px;
+}
+
+.details-content {
+    padding: 12px;
+    color: #fff;
+    font-size: 0.9em;
+    overflow-y: auto;
+    max-height: 150px;
+}
+
+.detail-item {
+    margin-bottom: 8px;
+}
+
+.detail-item strong {
+    color: #ff6b17;
+}
+
+.detail-value {
+    margin-top: 4px;
+    padding: 6px 8px;
+    background-color: #2a2a2a;
+    border-radius: 4px;
+    word-break: break-word;
+}
+
+.url-display {
+    word-break: break-all;
+    font-family: monospace;
+    font-size: 0.85em;
+}
+
+.edit-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    background-color: #1a1a1a;
+}
+
+.edit-panel.expanded {
+    max-height: 400px;
+}
+
+.edit-content {
+    padding: 12px;
+    color: #fff;
+    font-size: 0.9em;
+    overflow-y: auto;
+    max-height: 400px;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    color: #ff6b17;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.edit-input {
+    width: 100%;
+    padding: 8px;
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 0.9em;
+}
+
+.edit-input.monospace {
+    font-family: monospace;
+}
+
+.edit-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.cancel-button {
+    padding: 8px 16px;
+    background-color: #444;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.save-button {
+    padding: 8px 16px;
+    background-color: #ff6b17;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 1.2em;
+}
+
+.div-flex{
+        flex-direction: row ;
+    }
+
+
+@media(max-width:770px)  {
+    .div-flex{
+        flex-direction: column ;
+    }
 }

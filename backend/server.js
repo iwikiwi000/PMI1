@@ -15,6 +15,7 @@ const adminRoutes = require("./routes/admin");
 const cameraRoutes = require("./routes/cameras");
 
 const dbHndler = require("./database/dbHandler");
+const { updateCamera } = dbHndler;
 const { startStream, stopStream, stopAllStreams, getStreamStatus } = require("./streamManager");
 const ipWhitelist = require("./routes/ipWhitelist");
 
@@ -67,6 +68,16 @@ app.use("/hls", express.static(path.join(__dirname, "public/hls")));
     console.error("❌ Error initializing streams:", err);
   }
 })();
+
+app.put('/api/cameras/:id', async (req, res) => {
+    try {
+        const { title, source, link } = req.body;
+        await updateCamera(req.params.id, title, source, link);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 app.use("/", publicRoutes);
 app.use("/admin", authMiddleware, adminRoutes);
