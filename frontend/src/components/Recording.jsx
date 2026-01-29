@@ -3,7 +3,7 @@ export default function Recording() {
   return (
     <div className="mb-2">
       {}
-      <p className="text-start fw-bold">Kamer na chodbe</p>
+      <p className="text-start fw-bold">Kamera na chodbe</p>
       <div className="d-flex gap-2 flex-wrap">
         <div>
             <img src="/assets/image.png" alt="recording" style={{

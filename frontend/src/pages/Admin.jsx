@@ -71,10 +71,7 @@ export default function Admin(){
 
     return(
         <div className='m-4'>
-            <div className=''>
-                <p>meno</p>
-                <p>rola</p>
-            </div>
+            <h2>Používatelia</h2>
             {users.length > 0 ? (users.map((user)=>(
                 <User
                 key={user.u_id}
