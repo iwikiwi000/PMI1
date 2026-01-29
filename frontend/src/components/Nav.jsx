@@ -44,9 +44,20 @@ export default function Nav() {
               <ListItemText primary="Záznam" />
             </ListItemButton>
             {role === "admin" && (
-              <ListItemButton component={Link} to="/admin">
+              <>
+                <ListItemButton component={Link} to="/admin">
                 <ListItemText primary="Správa" />
-              </ListItemButton>
+                </ListItemButton>
+
+                <ListItemButton
+                component="a"
+                href="https://cloudsso.hikvision.com/login"
+                target="_blank"
+                rel="noopener noreferrer"
+                >
+                <ListItemText primary="HIKvision" />
+                </ListItemButton>
+              </>
             )}
           </List>
         </Drawer>
