@@ -20,6 +20,7 @@
     "jwt-decode": "^4.0.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-icons-kit": "^2.0.0",
     "react-router-dom": "^7.9.3",
     "zustand": "^5.0.9"
   },
