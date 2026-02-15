@@ -1,4 +1,3 @@
-
 export default function Recording() {
   return (
     <div className="mb-2">
