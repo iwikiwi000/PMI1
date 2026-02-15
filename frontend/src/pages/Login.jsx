@@ -25,7 +25,6 @@ export default function Login(){
 
     const handleSubmit = async(e) => {
         e.preventDefault();
-        console.log("FORM SUBMITTED");
         setError("");
 
         try {
