@@ -12,6 +12,7 @@ export default function Admin(){
     const[users, setUsers] = useState([]);
     const [isFormVisible, setIsFormVisible] = useState(false);
     const[newUser, setNewUser] = useState({name: "", role: "admin", password: ""});
+    const[warning, setWarning] = useState("");
 
     const handleRemoveUser = async (u_id) => {
         try {
@@ -42,6 +43,12 @@ export default function Admin(){
 
     const handleFormSubmit = async(e) => {
         e.preventDefault();
+
+        if(!/\d/.test(newUser.password) || !/[!@#$%^&*(),.?":{}|<>]/.test(newUser.password)){
+            setWarning("Heslo musí obsahovať aspoň jedno číslo a špeciálny charakter!");
+            return;
+        }
+
         try{
             await api.post("/admin/addUser", newUser);
         
@@ -122,7 +129,7 @@ export default function Admin(){
             }}
             >
             <h3>Pridať nového používateľa</h3>
-
+            {warning !== "" ? <p style={{color:"rgb(255, 0, 0)"}}>{warning}</p> : null}
             <label>Meno:</label>
             <input
                 type="text"

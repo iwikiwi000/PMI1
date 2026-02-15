@@ -23,7 +23,7 @@ const rateLimit = require("express-rate-limit");
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 50, // pre devikov
+    max: 50, // pre dev
     message: "Priveľa pokusov na prihlásenie. Skúste to neskôr."
 });
 

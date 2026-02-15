@@ -35,37 +35,37 @@ app.use("/hls", express.static(path.join(__dirname, "public/hls")));
 (async () => {
   try {
     const cameras = await dbHndler.getCameras();
-    console.log("🔍 DEBUG: Cameras from DB:", cameras);
-    console.log(`📊 Found ${cameras.length} cameras in database`);
+    console.log("DEBUG: Kamery z DB:", cameras);
+    console.log(`${cameras.length} v DB`);
     
     if (cameras.length === 0) {
-      console.log("⚠️ No cameras found in database!");
+      console.log("No cameras found in database!");
       return;
     }
     
     cameras.forEach(cam => {
       const name = cam.title.toLowerCase().replace(/\s+/g, "_");
-      console.log(`🎥 Starting stream for: ${cam.title}`);
-      console.log(`   Stream name: ${name}`);
-      console.log(`   RTSP source: ${cam.source}`);
-      console.log(`   HLS output: ${cam.link}`);
+      console.log(`Starting stream for: ${cam.title}`);
+      console.log(`Stream name: ${name}`);
+      console.log(`RTSP source: ${cam.source}`);
+      console.log(`HLS output: ${cam.link}`);
       
       try {
         startStream(name, cam.source);
-        console.log(`✅ Stream ${name} started successfully`);
+        console.log(`Stream ${name} started successfully`);
       } catch (err) {
-        console.error(`❌ Failed to start stream ${name}:`, err);
+        console.error(`Failed to start stream ${name}:`, err);
       }
     });
     
-    // Počkaj 2 sekundy a skontroluj status
+    //skontroluj status
     setTimeout(() => {
       const status = getStreamStatus();
-      console.log("📊 Stream status after 2s:", JSON.stringify(status, null, 2));
+      console.log("Stream status - 2s:", JSON.stringify(status, null, 2));
     }, 2000);
     
   } catch (err) {
-    console.error("❌ Error initializing streams:", err);
+    console.error("Error initializing streams:", err);
   }
 })();
 
@@ -84,21 +84,21 @@ app.use("/admin", authMiddleware, adminRoutes);
 app.use("/cameras", authMiddleware, cameraRoutes);
 
 app.get('/', (req, res) => {
-  res.send('Backend running!');
+  res.send('Backend idze!');
 });
 
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received, stopping all streams...');
+  console.log('SIGTERM stopped strem');
   stopAllStreams();
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  console.log('SIGINT received, stopping all streams...');
+  console.log('SIGTERM stopped strem');
   stopAllStreams();
   process.exit(0);
 });
 
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server idzee on http://localhost:${port}`);
 });

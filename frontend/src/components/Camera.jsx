@@ -8,12 +8,10 @@ export default function Camera({ link, title, cameraName, bitrate = 0, cameraId,
   const [showDetails, setShowDetails] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   
-  // Editovateľné polia
   const [editTitle, setEditTitle] = useState(title);
   const [editSource, setEditSource] = useState(cameraName);
   const [editLink, setEditLink] = useState(link);
 
-  // Funkcia na uloženie zmien
   const handleSave = async () => {
     try {
       const response = await axios.put(`http://localhost:5000/api/cameras/${cameraId}`, {
@@ -23,22 +21,20 @@ export default function Camera({ link, title, cameraName, bitrate = 0, cameraId,
       });
       
       if (response.data.success) {
-        alert("Kamera úspešne aktualizovaná!");
+        alert("Kamera aktualizovaná!");
         setIsEditing(false);
         
-        // Ak existuje callback na update, zavolaj ho
         if (onUpdate) {
           onUpdate();
         }
       }
     } catch (err) {
 
-      console.error("Chyba pri aktualizácii kamery:", err);
+      console.error("Chyba pri aktualizácii:", err);
       alert("Nepodarilo sa aktualizovať kameru!", err);
     }
   };
 
-  // Zrušenie editácie
   const handleCancel = () => {
     setEditTitle(title);
     setEditSource(cameraName);

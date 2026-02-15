@@ -20,8 +20,6 @@ router.get("/getUsers", authMiddleware, roleMiddleware(["admin"]), async(req, re
 
 router.post("/addUser", authMiddleware, roleMiddleware(["admin"]), async(req, res)=>{
     const {name, password, role} = req.body;
-    console.log("Na backend", name, password, role);
-
     try{
 
         if (!name || !password || !role) {
@@ -33,7 +31,7 @@ router.post("/addUser", authMiddleware, roleMiddleware(["admin"]), async(req, re
         const hashed = await bcrypt.hash(password, salt);
 
         await dbHandler.addUser(name, role, salt, hashed);
-        console.log("User succesfully added");
+        console.log("User added");
         res.status(201).json({ message: "User added successfully" });
 
     }catch(err){

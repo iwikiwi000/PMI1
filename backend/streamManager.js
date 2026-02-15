@@ -6,14 +6,12 @@ const streams = new Map();
 
 function startStream(name, rtspUrl) {
   if (streams.has(name)) {
-    console.log(`Stream ${name} already running`);
     return;
   }
 
   const hlsDir = path.join(__dirname, "public", "hls", name);
   if (!fs.existsSync(hlsDir)) {
     fs.mkdirSync(hlsDir, { recursive: true });
-    console.log(`✅ Created directory: ${hlsDir}`);
   }
 
   const outputPath = path.join(hlsDir, "stream.m3u8");
@@ -22,9 +20,10 @@ function startStream(name, rtspUrl) {
   const targetAudioBitrate = 128;
   const targetTotalBitrate = targetVideoBitrate + targetAudioBitrate;
 
-  console.log(`🎥 Starting stream: ${name}`);
-  console.log(`   RTSP: ${rtspUrl}`);
-  console.log(`   Output: ${outputPath}`);
+  //debug
+  console.log(`Starting stream: ${name}`);
+  console.log(`RTSP: ${rtspUrl}`);
+  console.log(`Output: ${outputPath}`);
 
   const ffmpeg = spawn("ffmpeg", [
     "-rtsp_transport", "tcp",
@@ -91,10 +90,10 @@ function startStream(name, rtspUrl) {
     bitrateInterval: bitrateInterval
   });
 
-  console.log(`✅ ${name}: Target bitrate nastavený na ${targetTotalBitrate} kbps`);
+  console.log(`${name}: bitrate nastavený na ${targetTotalBitrate} kbps`);
 
   ffmpeg.stdout.on("data", (data) => {
-    console.log(`📺 FFmpeg ${name} stdout: ${data.toString().trim()}`);
+    console.log(`FFmpeg ${name}: ${data.toString().trim()}`);
   });
 
   ffmpeg.stderr.on("data", (data) => {
@@ -114,49 +113,49 @@ function startStream(name, rtspUrl) {
       if (streamData && kbps > 0) {
         streamData.bitrate = kbps;
         streamData.lastUpdate = Date.now();
-        console.log(`📊 ${name}: Skutočný bitrate = ${kbps.toFixed(0)} kbps`);
+        console.log(`${name}: Skutočný bitrate = ${kbps.toFixed(0)} kbps`);
       }
     }
 
     if (output.includes("Input #0")) {
       connectionEstablished = true;
-      console.log(`✅ ${name}: Connected to RTSP stream`);
+      console.log(`${name}: Connected to RTSP stream`);
     }
 
     if (output.includes("Opening") && output.includes("stream.m3u8")) {
       outputStarted = true;
-      console.log(`✅ ${name}: Started writing HLS playlist`);
+      console.log(`${name}: Started writing HLS playlist`);
     }
 
     if (output.includes("error") || output.includes("Error") ||
         output.includes("warning") || output.includes("Warning")) {
-      console.log(`⚠️ FFmpeg ${name}: ${output.trim()}`);
+      console.log(`FFmpeg ${name}: ${output.trim()}`);
     }
 
     if (output.includes("frame=") || output.includes("time=")) {
       if (Math.random() < 0.02) {
-        console.log(`📊 ${name}: ${output.match(/frame=\s*\d+|time=[\d:.]+/g)?.join(', ')}`);
+        console.log(`${name}: ${output.match(/frame=\s*\d+|time=[\d:.]+/g)?.join(', ')}`);
       }
     }
   });
 
   ffmpeg.on("error", (err) => {
-    console.error(`❌ FFmpeg ${name} spawn error:`, err.message);
+    console.error(`FFmpeg ${name} error:`, err.message);
     streams.delete(name);
 
     setTimeout(() => {
-      console.log(`🔄 Retrying stream: ${name}`);
+      console.log(`Retrying stream: ${name}`);
       startStream(name, rtspUrl);
     }, 10000);
   });
 
   ffmpeg.on("close", (code) => {
-    console.log(`ℹ️ FFmpeg ${name} exited with code ${code}`);
+    console.log(`FFmpeg ${name} ended with code ${code}`);
     streams.delete(name);
 
     if (code !== 0 && code !== 255) {
       setTimeout(() => {
-        console.log(`🔄 Restarting stream: ${name}`);
+        console.log(`Restarting stream: ${name}`);
         startStream(name, rtspUrl);
       }, 5000);
     }
@@ -164,24 +163,24 @@ function startStream(name, rtspUrl) {
 
   setTimeout(() => {
     if (!connectionEstablished) {
-      console.error(`❌ ${name}: Failed to connect to RTSP stream after 10s`);
+      console.error(`${name}: Failed to connect to RTSP stream after 10s`);
       return;
     }
 
     if (!outputStarted) {
-      console.error(`❌ ${name}: Connected but no HLS output after 10s`);
+      console.error(`${name}: Connected but no HLS output after 10s`);
       return;
     }
 
-    console.log(`✅ ${name}: Stream is working correctly`);
+    console.log(`${name}: Stream is working correctly`);
 
     const m3u8Exists = fs.existsSync(outputPath);
     const segmentExists = fs.readdirSync(hlsDir).some(f => f.endsWith('.ts'));
 
     if (m3u8Exists && segmentExists) {
-      console.log(`✅ ${name}: HLS files created successfully`);
+      console.log(`${name}: HLS files created successfully`);
     } else {
-      console.error(`❌ ${name}: HLS files not found`);
+      console.error(`${name}: HLS files not found`);
     }
   }, 10000);
 }
@@ -189,9 +188,8 @@ function startStream(name, rtspUrl) {
 function stopStream(name) {
   const stream = streams.get(name);
   if (stream) {
-    console.log(`🛑 Stopping stream: ${name}`);
+    console.log(`Stopping stream: ${name}`);
     
-    // ⭐ Zastav bitrate meranie
     if (stream.bitrateInterval) {
       clearInterval(stream.bitrateInterval);
     }
@@ -204,9 +202,9 @@ function stopStream(name) {
       if (fs.existsSync(hlsDir)) {
         try {
           fs.rmSync(hlsDir, { recursive: true, force: true });
-          console.log(`🗑️ Cleaned up HLS directory: ${name}`);
+          console.log(`Cleaned up HLS directory: ${name}`);
         } catch (err) {
-          console.error(`❌ Failed to clean up ${name}:`, err.message);
+          console.error(`Failed to clean up ${name}:`, err.message);
         }
       }
     }, 1000);
@@ -214,7 +212,7 @@ function stopStream(name) {
 }
 
 function stopAllStreams() {
-  console.log("🛑 Stopping all streams...");
+  console.log("Stopping all streams...");
   streams.forEach((stream, name) => stopStream(name));
 }
 
