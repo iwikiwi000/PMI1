@@ -58,14 +58,14 @@ export default function Camera({ link, title, cameraName, bitrate = 0, cameraId,
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().catch((err) => {
-          console.error("Chyba pri prehrávaní:", err);
+          console.error("Err pri prehrávaní:", err);
         });
         setIsPlaying(true);
       });
 
       hls.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
-          console.error("Kritická chyba HLS:", data);
+          console.error("Error HLS:", data);
           setIsPlaying(false);
         }
       });
@@ -94,13 +94,13 @@ export default function Camera({ link, title, cameraName, bitrate = 0, cameraId,
             onClick={() => setShowDetails(!showDetails)}
             className={`details-button ${showDetails ? "active" : ""}`}
           >
-            ℹ️ Info
+            Info
           </button>
           <button
             onClick={() => setIsEditing(!isEditing)}
             className={`edit-button ${isEditing ? "active" : ""}`}
           >
-            ✏️ Edit
+            Edit
           </button>
         </div>
       </div>
@@ -113,7 +113,6 @@ export default function Camera({ link, title, cameraName, bitrate = 0, cameraId,
         playsInline
       />
 
-      {/* Rolovacia lišta s detailmi */}
       <div className={`details-panel ${showDetails ? "expanded" : ""}`}>
         <div className="details-content">
           <div className="detail-item">
@@ -132,7 +131,6 @@ export default function Camera({ link, title, cameraName, bitrate = 0, cameraId,
         </div>
       </div>
 
-      {/* Edit panel */}
       <div className={`edit-panel ${isEditing ? "expanded" : ""}`}>
         <div className="edit-content">
           <div className="form-group">
